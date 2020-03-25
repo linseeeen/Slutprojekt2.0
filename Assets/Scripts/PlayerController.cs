@@ -35,7 +35,31 @@ public class PlayerController : MonoBehaviour
         {
             transform.Translate(-movementY);
         }
-
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        int wateringCan = 0;
+        int wheelbarrow = 0;
+        if (collision.tag == "watering can")
+        {
+            print("Vattenkanna!!!");
+            if (wateringCan == 0)
+            {
+                wateringCan++;
+                wheelbarrow = 0;
+                print(wateringCan);
+            }
+        }
+        else if (collision.tag == "wheelbarrow")
+        {
+            print("skottkärra");
+            if (wheelbarrow == 0)
+            {
+                wheelbarrow++;
+                wateringCan = 0;
+                print(wheelbarrow);
+            }
+        }
 
     }
 }
