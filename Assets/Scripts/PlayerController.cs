@@ -4,63 +4,72 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+
+    Animator animator;
+    Rigidbody2D rb2d;
+    SpriteRenderer spriteRenderer;
+
+    public float speed = 1.5f;
+    public float jump = 1.5f;
+
+    bool isGrounded;
+    public Transform groundCheck;
+    public Transform groundCheckL;
+    public Transform groundCheckR;
+
     // Start is called before the first frame update
-
-    public float speed = 3;
-
     void Start()
     {
-
+        animator = GetComponent<Animator>();
+        rb2d = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        
     }
 
-    // Update is called once per frame
-    void Update()
+    private void FixedUpdate()
     {
-
-        float controlX = Input.GetAxisRaw("Horizontal");
-        float controlY = Input.GetAxisRaw("Vertical");
-
-
-        Vector3 movementX = Vector3.right * Time.deltaTime * speed * controlX;
-        Vector3 movementY = Vector3.up * Time.deltaTime * speed * controlY;
-
-
-        transform.Translate(movementX + movementY);
-        if (Mathf.Abs(transform.position.x) > 8.5)
+        if(Physics2D.Linecast(transform.position, groundCheck.position, 1<< LayerMask.NameToLayer("Ground"))||
+            Physics2D.Linecast(transform.position, groundCheckL.position, 1 << LayerMask.NameToLayer("Ground"))||
+            Physics2D.Linecast(transform.position, groundCheckR.position, 1 << LayerMask.NameToLayer("Ground")))
         {
-            transform.Translate(-movementX);
+            isGrounded = true;
+        }
+        else
+        {
+            isGrounded = false;
         }
 
-        if (Mathf.Abs(transform.position.y) > 4.5)
+        if (Input.GetKey("d") || Input.GetKey("right"))
         {
-            transform.Translate(-movementY);
-        }
-    }
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        int wateringCan = 0;
-        int wheelbarrow = 0;
-        if (collision.tag == "watering can")
-        {
-            print("Vattenkanna!!!");
-            if (wateringCan == 0)
+            rb2d.velocity = new Vector2(speed, rb2d.velocity.y);
+            if (isGrounded == true)
             {
-                wateringCan++;
-                wheelbarrow = 0;
-                print(wateringCan);
+                animator.Play("Run");
             }
+            spriteRenderer.flipX = false;
         }
-        else if (collision.tag == "wheelbarrow")
+        else if (Input.GetKey("a") || Input.GetKey("left"))
         {
-            print("skottkärra");
-            if (wheelbarrow == 0)
+            rb2d.velocity = new Vector2(-speed, rb2d.velocity.y);
+            if (isGrounded == true)
             {
-                wheelbarrow++;
-                wateringCan = 0;
-                print(wheelbarrow);
+                animator.Play("Run");
+            }
+            spriteRenderer.flipX = true;
+        }
+        else
+        {
+            rb2d.velocity = new Vector2(0, rb2d.velocity.y);
+            if (isGrounded == true)
+            {
+                animator.Play("Idle");
             }
         }
 
+        if (Input.GetKey("space") && isGrounded)
+        {
+            rb2d.velocity = new Vector2(rb2d.velocity.x, jump);
+            animator.Play("Jump");
+        }
     }
 }
-
