@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -17,6 +18,8 @@ public class PlayerController : MonoBehaviour
     public Transform groundCheckL;
     public Transform groundCheckR;
 
+    public Transform store;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -25,7 +28,13 @@ public class PlayerController : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         
     }
-
+    private void Update()
+    {
+        if (transform.position == store.transform.position)
+        {
+            SceneManager.LoadScene("Store");
+        }
+    }
 
     private void FixedUpdate()
     {
